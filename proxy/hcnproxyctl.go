@@ -1,6 +1,3 @@
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT license.
-
 // Package hcnproxyctrl implements a high-level library that allows users to program
 // layer-4 proxy policies on Windows through the Host Networking Service (HNS).
 package hcnproxyctrl
@@ -8,7 +5,6 @@ package hcnproxyctrl
 import (
 	"encoding/json"
 	"errors"
-	"net"
 	"strconv"
 	"strings"
 
@@ -232,13 +228,4 @@ func validatePolicy(policy Policy) error {
 		return errors.New("policy has invalid proxy port value: 0")
 	}
 	return nil
-}
-
-// formatIP returns the given address as a string,
-// or the empty string if it's nil.
-func formatIP(ip net.IP) string {
-	if ip == nil {
-		return ""
-	}
-	return ip.String()
 }

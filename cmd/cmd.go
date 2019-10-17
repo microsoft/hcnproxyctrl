@@ -3,7 +3,6 @@
 
 // Package cmd has the code for the following commands
 //
-//    Available Commands:
 //      add         Add a proxy policy to an endpoint
 //      clear       Remove all proxy policies from an endpoint
 //      help        Help about any command

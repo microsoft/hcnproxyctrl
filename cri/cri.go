@@ -20,7 +20,7 @@ var (
 	// RuntimeEndpoint is CRI server runtime endpoint
 	RuntimeEndpoint string
 
-	// Timeout  of connecting to server (default: 10s)
+	// Timeout  of connecting to server
 	Timeout time.Duration
 )
 
