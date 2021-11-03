@@ -11,7 +11,8 @@ It is intended to be used as part of a service mesh to redirect all traffic in a
 On Linux, iptables rules are used to intercept and redirect traffic. On Windows, this is achieved using the HNS [L4WfpProxyPolicySetting](https://docs.microsoft.com/en-us/virtualization/api/hcn/hns_schema#l4wfpproxypolicysetting). The `L4WfpProxyPolicySetting` utilizes the [Windows Filtering Platform](https://docs.microsoft.com/en-us/windows/win32/fwp/about-windows-filtering-platform) (WFP) for network traffic filtering and redirection.
 
 For demonstration, here is an example JSON of a `L4WfpProxyPolicySetting` that will ensure all (in/out)bound `TCP` traffic gets redirected to (proxy) ports `9091`/`9191` respectively. unless:
-  * The traffic has already been inspected by the network proxy (process launched with user identity [SID S-15-18](https://docs.microsoft.com/en-us/windows/security/identity-protection/access-control/security-identifiers)). This is used to distinguish traffic that has already been redirected and processed by the network proxy. This is required because otherwise traffic originating from the proxy would be forwarded back to the proxy, thereby creating a redirection loop.
+  * The traffic has already been inspected by the network proxy (process launched with user identity belonging to group with SID [S-1-5-32-556](https://docs.microsoft.com/en-us/windows/security/identity-protection/access-control/security-identifiers)). This is used to distinguish traffic that has already been redirected and processed by the network proxy. This is required because otherwise traffic originating from the proxy would be forwarded back to the proxy, thereby creating a redirection loop.
+    * Given that the user SID gets generated at runtime, we cannot predict the final user SID statically ahead of time. Instead, we are specifying a built-in Windows group SID `Builtin\Network Configuration Operators`, and launching the network proxy as a user that belongs to that group. Since the `L4WfpProxyPolicySetting` supports prefix matching, and the user SID will be prefixed with the group SID `S-1-5-32-556`, the policy will honor the group SID as an exception.
     * See `"UserSID"` field below.
   * The traffic has destination IP `"127.0.0.1"`. This is needed to accommodate traffic between other (local) sidecar applications that share the same IP address and port space. 
     * See `"IpAddressExceptions"` field below.
@@ -34,7 +35,7 @@ For demonstration, here is an example JSON of a `L4WfpProxyPolicySetting` that w
             "PortExceptions": ["90001","90002"],
             "IpAddressExceptions": ["127.0.0.1"]
         },
-        "UserSID": "S-1-5-18"
+        "UserSID": "S-1-5-32-556"
     }
 }
 ```
